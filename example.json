@@ -1,0 +1,109 @@
+[
+  {
+    "cros_inst": "V",
+    "cros_dep": "V",
+    "pho_code": "2601001",
+    "code": "ED010A",
+    "category": "學程",
+    "department": "師培中心",
+    "clas": "教育學程－中",
+    "name": "教育議題專題",
+    "sem": "教必",
+    "year": "半",
+    "credits": "2",
+    "lecturer": "李  珀",
+    "time1": "5-34",
+    "loc1": "全人415",
+    "time2": "",
+    "loc2": "",
+    "time3": "",
+    "loc3": "",
+    "notes": "19屆勿選; 20屆必選修",
+    "people": "45",
+    "textbook": [
+
+    ]
+  },
+  {
+    "cros_inst": "V",
+    "cros_dep": "V",
+    "pho_code": "2601701",
+    "code": "ED017A",
+    "category": "學程",
+    "department": "師培中心",
+    "clas": "教育學程－中",
+    "name": "適性教學",
+    "sem": "教選",
+    "year": "半",
+    "credits": "2",
+    "lecturer": "林淑君",
+    "time1": "4-CD",
+    "loc1": "全人415",
+    "time2": "",
+    "loc2": "",
+    "time3": "",
+    "loc3": "",
+    "notes": "19屆勿選,不算學分; 20屆選修,需參加103年",
+    "people": "25",
+    "textbook": [
+
+    ]
+  },
+  {
+    "cros_inst": "V",
+    "cros_dep": "V",
+    "pho_code": "2604701",
+    "code": "ED047A",
+    "category": "學程",
+    "department": "師培中心",
+    "clas": "教育學程－中",
+    "name": "電腦與教學",
+    "sem": "教選",
+    "year": "半",
+    "credits": "2",
+    "lecturer": "簡志峰",
+    "time1": "4-56",
+    "loc1": "教學705",
+    "time2": "",
+    "loc2": "",
+    "time3": "",
+    "loc3": "",
+    "notes": "19屆可選; 20屆勿選,不算學分",
+    "people": "30",
+    "textbook": [
+
+    ]
+  },
+  {
+    "cros_inst": "V",
+    "cros_dep": "V",
+    "pho_code": "2604901",
+    "code": "ED049A",
+    "category": "學程",
+    "department": "師培中心",
+    "clas": "教育學程－中",
+    "name": "青少年心理學",
+    "sem": "教選",
+    "year": "半",
+    "credits": "2",
+    "lecturer": "林淑君",
+    "time1": "4-78",
+    "loc1": "全人415",
+    "time2": "",
+    "loc2": "",
+    "time3": "",
+    "loc3": "",
+    "notes": "19屆選修;20屆選修",
+    "people": "25",
+    "textbook": [
+      {
+        "author": "姜, 元御",
+        "isbn": "9789571455457",
+        "name": "？少年心理學 = Adolescent psychology",
+        "publisher": "<a href=\"/search~S1*cht?/h{u4E09}{u6C11}%2C/h{213024}{21464d}/-3",
+        "revision": "初版",
+        "year": "2011"
+      }
+    ]
+  }
+]
