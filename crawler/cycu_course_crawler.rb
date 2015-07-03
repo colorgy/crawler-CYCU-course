@@ -2,6 +2,9 @@ require 'json'
 require 'crawler_rocks'
 require 'pry'
 
+require 'thread'
+require 'thwait'
+
 class CycuCourseCrawler
   include CrawlerRocks::DSL
 
@@ -29,15 +32,19 @@ class CycuCourseCrawler
     @term = params && params["term"].to_i || term
     @update_progress_proc = update_progress
     @after_each_proc = after_each
+
   end
 
   def courses detail: false
+    @courses = []
+    @threads = []
+
     url = "http://itouch.cycu.edu.tw/active_system/CourseQuerySystem/GetCourses.jsp?yearTerm=#{@year-1911}#{@term}"
 
     r = Curl.get(url).body_str.force_encoding('utf-8')
     data = r.strip
     rows = data.split('@')
-    @courses = []
+
     rows[1..-1].each do |row|
 
       datas = row.split('|')
@@ -53,9 +60,9 @@ class CycuCourseCrawler
       course_locations = []
       times = []
 
-      course_locations << datas[17]
-      course_locations << datas[19]
-      course_locations << datas[21]
+      course_locations << (datas[17].empty? ? nil : datas[17] )
+      course_locations << (datas[19].empty? ? nil : datas[19] )
+      course_locations << (datas[21].empty? ? nil : datas[21] )
 
       times << datas[16]
       times << datas[18]
@@ -64,18 +71,23 @@ class CycuCourseCrawler
       times.each do |tim|
         tim && tim.match(/(?<d>.)\-(?<p>.+)/) do |m|
           m[:p].split("").each do |period|
-            course_days << m[:d]
+            course_days << m[:d].to_i
             course_periods << PERIODS[period]
           end
         end
       end
 
-      @courses << {
+      lecturer_code = CGI.escape(datas[15]).tr('%', '')
+
+      course = {
         # cros_inst: datas[1], # 跨部
         # cros_dep: datas[2], # 跨系
         # datas[4] # 停休與否
         # pho_code: datas[5], # 語音代碼
-        code: datas[6], # 課程代碼
+        year: @year,
+        term: @term,
+        code: "#{@year}-#{@term}-#{datas[6]}-#{lecturer_code}",
+        general_code: datas[6], # 課程代碼
         # category: datas[7], # 課程類別
         department: datas[8], # 權責單位?
         department_code: department_code,
@@ -83,8 +95,6 @@ class CycuCourseCrawler
         name: datas[10], # 課程名稱
         required: required, # 必選修
         # year: datas[12], # 全半年
-        year: @year,
-        term: @term,
         # datas[13] # ?
         credits: datas[14], # 學分
         lecturer: datas[15], # 授課教師
@@ -120,31 +130,44 @@ class CycuCourseCrawler
         location_9: course_locations[8],
         url: url,
       }
+      @courses << course
     end
-    File.open('courses.json', 'w') {|f| f.write(JSON.pretty_generate(@courses))}
-  end
+    ThreadsWait.all_waits(*@threads)
 
-  def batch_download_books
-    codes = @courses.map {|c| c["code"]}
-    codes.each do |c|
-      puts "load #{c}"
-      system("phantomjs spider.js #{c}")
-    end
-  end
+    @courses.uniq!
 
-  def map_book_data
-    @courses.each do |c|
-      filename = "book_datas/#{c[:code]}"
-      if File.exist?(filename)
-        textbook = JSON.parse(File.read(filename))
-        c[:textbook] = textbook
+    @threads = []
+    @courses.each {|course|
+      sleep(1) until (
+        @threads.delete_if { |t| !t.status };  # remove dead (ended) threads
+        @threads.count < ( (ENV['MAX_THREADS'] && ENV['MAX_THREADS'].to_i) || 20)
+      )
+      @threads << Thread.new do
+        @after_each_proc.call(course: course) if @after_each_proc
       end
-    end
+    }
+    ThreadsWait.all_waits(*@threads)
+
+    @courses
   end
 
-  def save
-    File.open('courses.json', 'w') {|f| f.write(JSON.pretty_generate(@courses))}
-  end
+  # def batch_download_books
+  #   codes = @courses.map {|c| c["code"]}
+  #   codes.each do |c|
+  #     puts "load #{c}"
+  #     system("phantomjs spider.js #{c}")
+  #   end
+  # end
+
+  # def map_book_data
+  #   @courses.each do |c|
+  #     filename = "book_datas/#{c[:code]}"
+  #     if File.exist?(filename)
+  #       textbook = JSON.parse(File.read(filename))
+  #       c[:textbook] = textbook
+  #     end
+  #   end
+  # end
 
   private
     def current_year
@@ -157,5 +180,5 @@ class CycuCourseCrawler
 
 end
 
-cc = CycuCourseCrawler.new(year: 2014, term: 1)
-cc.courses
+# cc = CycuCourseCrawler.new(year: 2014, term: 1)
+# File.open('cycu_courses.json', 'w') {|f| f.write(JSON.pretty_generate(cc.courses))}
