@@ -23,7 +23,8 @@ class CycuCourseCrawler
     "D" => 12,
     "E" => 13,
     "F" => 14,
-    "G" => 15
+    "G" => 15,
+    "H" => 16
   }
 
   def initialize year: current_year, term: current_term, update_progress: nil, after_each: nil, params: nil
