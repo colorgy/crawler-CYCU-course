@@ -46,7 +46,7 @@ class CycuCourseCrawler
     data = r.strip
     rows = data.split('@')
 
-    rows[1..-1].each do |row|
+    rows[1..-1].each_with_index do |row, row_index|
 
       datas = row.split('|')
       unless datas[6].nil?
@@ -61,9 +61,9 @@ class CycuCourseCrawler
       course_locations = []
       times = []
 
-      course_locations << (datas[17].empty? ? nil : datas[17] )
-      course_locations << (datas[19].empty? ? nil : datas[19] )
-      course_locations << (datas[21].empty? ? nil : datas[21] )
+      course_locations << (datas[17] && (datas[17].empty? ? nil : datas[17] ) )
+      course_locations << (datas[19] && (datas[19].empty? ? nil : datas[19] ) )
+      course_locations << (datas[21] && (datas[21].empty? ? nil : datas[21] ) )
 
       times << datas[16]
       times << datas[18]
@@ -78,7 +78,7 @@ class CycuCourseCrawler
         end
       end
 
-      lecturer_code = CGI.escape(datas[15]).tr('%', '')
+      lecturer_code = datas[15] && CGI.escape(datas[15]).tr('%', '')
 
       course = {
         # cros_inst: datas[1], # 跨部
@@ -181,5 +181,5 @@ class CycuCourseCrawler
 
 end
 
-# cc = CycuCourseCrawler.new(year: 2014, term: 1)
-# File.open('cycu_courses.json', 'w') {|f| f.write(JSON.pretty_generate(cc.courses))}
+# cc = CycuCourseCrawler.new(year: 2015, term: 1)
+# File.open('1041_cycu_courses.json', 'w') {|f| f.write(JSON.pretty_generate(cc.courses))}
