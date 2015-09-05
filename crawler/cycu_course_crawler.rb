@@ -44,7 +44,7 @@ class CycuCourseCrawler
 
     r = Curl.get(url).body_str.force_encoding('utf-8')
     data = r.strip
-    rows = data.split('@')
+    rows = data.split('@@')
 
     rows[1..-1].each_with_index do |row, row_index|
 
